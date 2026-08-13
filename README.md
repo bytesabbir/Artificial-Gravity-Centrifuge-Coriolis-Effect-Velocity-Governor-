@@ -1,0 +1,1 @@
+# Artificial-Gravity-Centrifuge-Coriolis-Effect-Velocity-Governor-
