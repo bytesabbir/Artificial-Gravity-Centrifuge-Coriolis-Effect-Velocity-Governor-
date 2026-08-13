@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artificial Gravity Centrifuge — Coriolis Effect Velocity Governor</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-shell">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">◎</div>
+      <div class="brand-text"><b>Artificial Gravity Centrifuge</b><small>(Coriolis Effect Velocity Governor)</small><small>By Md. Sabbir Ahamed</small></div>
+    </div>
+    <nav>
+      <button class="nav-item active" data-page="dashboard">⌂ <span>Dashboard</span></button>
+      <button class="nav-item" data-page="setup">⚙ <span>Centrifuge Setup</span></button>
+      <button class="nav-item" data-page="simulation">◉ <span>Simulation</span></button>
+      <button class="nav-item" data-page="governor">◇ <span>Velocity Governor</span></button>
+      <button class="nav-item" data-page="results">▦ <span>Results &amp; Analysis</span></button>
+    </nav>
+    <div class="side-bottom">
+      <div class="small-label">SYSTEM STATUS</div>
+      <b>OPERATIONAL</b>
+      <span class="status-dot">● SYS NOMINAL</span>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- PAGE 1 -->
+    <section id="dashboard" class="page active">
+      <header class="topbar">
+        <div><div class="eyebrow">MISSION CONTROL</div><h1>Artificial Gravity Centrifuge — Coriolis Effect Velocity Governor</h1></div>
+        <span class="badge green">● NOMINAL</span>
+      </header>
+
+      <div class="metrics five">
+        <div class="metric"><label>ROTATION RATE</label><strong id="dashRpm">42.5 <i>RPM</i></strong><small>Target: 45.0 RPM</small></div>
+        <div class="metric"><label>ARTIFICIAL GRAVITY</label><strong class="green-t" id="dashGravity">0.34 <i>g</i></strong><small>Target: 1.00 g</small></div>
+        <div class="metric"><label>ARM RADIUS</label><strong id="dashRadius">12.8 <i>m</i></strong><small>Active configuration</small></div>
+        <div class="metric"><label>RIM VELOCITY</label><strong id="dashVelocity">4.45 <i>m/s</i></strong><small>Coriolis-governed</small></div>
+        <div class="metric warning"><label>CORIOLIS FORCE</label><strong id="dashCoriolis">0.89 <i>N</i></strong><small>Monitor threshold</small></div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="panel arm-panel">
+          <div class="section-title">ROTATING ARM TOP-DOWN ILLUSTRATION <span>● ACTIVE VIEW</span></div>
+          <div class="arm-stage large" id="dashStage">
+            <div class="orbit"></div><div class="ticks"></div><div class="rot-arm"></div><div class="hub"></div><div class="payload"></div>
+            <div class="vector velocity-v"></div><div class="vector coriolis-v"></div>
+            <div class="vector-label">F<sub>c</sub></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="section-title">GOVERNOR INTERLOCKS</div>
+          <div class="interlock"><span>Drive Motor</span><b class="green-t">● OK</b></div>
+          <div class="interlock"><span>Velocity Governor</span><b class="cyan-t">● ACTIVE</b></div>
+          <div class="interlock"><span>Coriolis Compensation</span><b class="cyan-t" id="dashInterlock">● 1.20 N</b></div>
+          <div class="interlock"><span>Safety Interlock</span><b class="green-t">● READY</b></div>
+        </div>
+      </div>
+
+      <div class="panel log-panel">
+        <div class="section-title">OPERATIONAL SYSTEM LOG</div>
+        <div class="log"><b>10:41:08</b><span>Governor initialized — tracking nominal speed.</span><em>INFO</em></div>
+        <div class="log"><b>10:41:12</b><span>Target velocity profile loaded.</span><em>INFO</em></div>
+        <div class="log"><b>10:41:17</b><span>Coriolis correction applied to arm velocity.</span><em>INFO</em></div>
+        <div class="log"><b>10:41:23</b><span>System interlock state validated.</span><em>INFO</em></div>
+      </div>
+    </section>
+
+    <!-- PAGE 2 -->
+    <section id="setup" class="page">
+      <header class="page-head">
+        <div><h2>CENTRIFUGE CONFIGURATION MATRIX</h2><p>Configure system control parameters before simulation</p></div>
+      </header>
+
+      <div class="setup-grid">
+        <div class="panel setup-panel">
+          <div class="section-title">SYSTEM CONTROL PARAMETERS</div>
+
+          <div class="slider-control">
+            <div class="slider-head"><span>ROTATION SPEED</span><b><output id="rpmOut">12.0</output> <small>RPM</small></b></div>
+            <input id="rpm" type="range" min="1" max="60" step="0.1" value="12">
+            <div class="range"><span>1</span><span>30</span><span>60</span></div>
+          </div>
+
+          <div class="slider-control">
+            <div class="slider-head"><span>TARGET VELOCITY</span><b><output id="targetOut">45.0</output> <small>m/s</small></b></div>
+            <input id="targetVelocity" type="range" min="5" max="120" step="0.1" value="45">
+            <div class="range"><span>5</span><span>60</span><span>120</span></div>
+          </div>
+
+          <div class="slider-control">
+            <div class="slider-head"><span>ARM RADIUS</span><b><output id="radiusOut">15.0</output> <small>m</small></b></div>
+            <input id="radius" type="range" min="2" max="30" step="0.1" value="15">
+            <div class="range"><span>2</span><span>15</span><span>30</span></div>
+          </div>
+
+          <div class="slider-control">
+            <div class="slider-head"><span>PAYLOAD MASS</span><b><output id="massOut">68</output> <small>kg</small></b></div>
+            <input id="mass" type="range" min="10" max="200" step="1" value="68">
+            <div class="range"><span>10</span><span>100</span><span>200</span></div>
+          </div>
+
+          <div class="slider-control">
+            <div class="slider-head"><span>SIMULATION TIME</span><b><output id="timeOut">120</output> <small>s</small></b></div>
+            <input id="simulationTime" type="range" min="10" max="300" step="1" value="120">
+            <div class="range"><span>10</span><span>150</span><span>300</span></div>
+          </div>
+
+          <div class="apply-row">
+            <span id="configState">● UNSAVED PARAMETER CHANGES</span>
+            <button class="btn" id="resetConfig">Reset to Defaults</button>
+            <button class="btn primary" id="applyConfig">Apply Configuration</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel telemetry-panel">
+            <div class="section-title">DERIVED PHYSICS TELEMETRY</div>
+            <div class="telemetry-card"><span>ANGULAR VELOCITY</span><b id="omegaValue">1.2566 <i>rad/s</i></b></div>
+            <div class="telemetry-card"><span>RIM VELOCITY</span><b id="rimValue">18.850 <i>m/s</i></b></div>
+            <div class="telemetry-card"><span>ARTIFICIAL GRAVITY</span><b class="green-t" id="gravityValue">2.415 <i>g</i></b></div>
+            <div class="telemetry-card"><span>CORIOLIS FORCE</span><b class="orange-t" id="coriolisValue">— <i>N</i></b></div>
+            <div class="telemetry-card"><span>CENTRIPETAL ACCELERATION</span><b id="accelValue">23.688 <i>m/s²</i></b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="apply-note">Changing sliders prepares a new configuration. <b>Only pressing “Apply Configuration” commits it to the live simulator.</b></div>
+    </section>
+
+    <!-- PAGE 3 -->
+    <section id="simulation" class="page">
+      <header class="page-head">
+        <div><h2>VELOCITY GOVERNOR REAL-TIME PHYSICS SIMULATOR</h2><p id="simStatus">Real-time dynamics — configuration not yet applied</p></div>
+        <span class="badge" id="simBadge">● READY</span>
+      </header>
+
+      <div class="sim-top">
+        <div class="panel vector-panel">
+          <div class="section-title">REAL-TIME DEFLECTION VECTORS <span id="vectorReadout">● WAITING FOR CONFIG</span></div>
+          <div class="vector-stage" id="vectorStage">
+            <div class="vector-ring"></div>
+            <div class="vector-arm" id="simArm"></div>
+            <div class="vector-hub"></div>
+            <div class="deflect-vector radial" id="radialVector"><span>v</span></div>
+            <div class="angle-marker" id="angleMarker"></div>
+          </div>
+        </div>
+
+        <div class="panel readout-panel">
+          <div class="section-title">SIMULATION READOUT</div>
+          <div class="readout"><span>VELOCITY</span><b id="simVelocity">18.85 <i>m/s</i></b></div>
+          <div class="readout"><span>ROTATION SPEED</span><b id="simRpm">12.0 <i>RPM</i></b></div>
+          <div class="readout"><span>ARTIFICIAL GRAVITY</span><b class="green-t" id="simGravity">2.415 <i>g</i></b></div>
+          <div class="readout"><span>CORIOLIS FORCE</span><b class="orange-t" id="simCoriolis">0.00 <i>N</i></b></div>
+          <div class="readout"><span>DEFLECTION ANGLE</span><b id="simAngle">0.0 <i>deg</i></b></div>
+        </div>
+      </div>
+
+      <div class="sim-controls panel">
+        <button class="btn primary" id="pauseBtn">Ⅱ PAUSE</button>
+        <button class="btn" id="resetSim">↻ RESET</button>
+        <span>LIVE CONFIG</span><b id="liveConfig">12.0 RPM / 15.0 m / 68 kg</b>
+        <small id="elapsed">ELAPSED TIME 00:00</small>
+      </div>
+
+      <div class="panel chart-panel">
+        <div class="section-title">TARGET VS VELOCITY TRAJECTORY <span>REAL-TIME</span></div>
+        <canvas id="velocityChart"></canvas>
+      </div>
+    </section>
+
+    <!-- PAGE 4 -->
+    <section id="governor" class="page">
+      <header class="page-head"><div><h2>VELOCITY GOVERNOR CONTROL</h2><p>Closed-loop Coriolis compensation controller</p></div><span class="badge green">● AUTO CONTROL</span></header>
+      <div class="gov-grid">
+        <div class="panel">
+          <div class="section-title">GOVERNOR CONTROL</div>
+          <div class="toggle"><button class="active">AUTO</button><button>MANUAL</button></div>
+          <label class="form-label">TARGET VELOCITY</label>
+          <input id="govSlider" type="range" min="5" max="120" step=".1" value="45">
+          <div class="gov-target" id="govTarget">45.0 <small>m/s</small></div>
+          <div class="mini-grid">
+            <div class="mini-card"><span>CURRENT VELOCITY</span><b id="govCurrent">18.85 <i>m/s</i></b></div>
+            <div class="mini-card"><span>VELOCITY ERROR</span><b id="govError">26.15 <i>m/s</i></b></div>
+          </div>
+          <div class="section-title compact">PID TUNING CONSTANTS</div>
+          <div class="pid-row"><span>Proportional Gain (Kp)</span><b>3.5</b></div>
+          <div class="pid-row"><span>Integral Gain (Ki)</span><b>0.6</b></div>
+          <div class="pid-row"><span>Derivative Gain (Kd)</span><b>0.3</b></div>
+        </div>
+        <div>
+          <div class="panel feedback-panel">
+            <div class="section-title">FEEDBACK CONTROL &amp; SYSTEM RESPONSE</div>
+            <div class="flow"><div class="node">SETPOINT<br><b id="flowTarget">45.0 m/s</b></div><span>→</span><div class="sum">Σ</div><span>→</span><div class="node">PID CONTROLLER<br><b>Kp 3.5 · Ki 0.6 · Kd 0.3</b></div><span>→</span><div class="node">CENTRIFUGE<br><b id="flowCurrent">18.85 m/s</b></div><span>→</span><div class="node green-node">OUTPUT<br><b id="flowOutput">41.2 m/s</b></div></div>
+          </div>
+          <div class="gov-charts"><div class="panel chart-panel"><div class="section-title">VELOCITY ERROR</div><canvas id="errorChart"></canvas></div><div class="panel chart-panel"><div class="section-title">CONTROLLER OUTPUT</div><canvas id="outputChart"></canvas></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 5 -->
+    <section id="results" class="page">
+      <header class="page-head"><div><h2>SIMULATION RESULTS &amp; ANALYSIS</h2><p>Post-simulation analysis — current applied configuration</p></div><div><span class="badge green">● STABLE</span> <button class="btn primary" id="exportCsv">↓ EXPORT CSV</button></div></header>
+      <div class="metrics four">
+        <div class="metric"><label>MAX RPM</label><strong id="resRpm">12.0 <i>rpm</i></strong><small>applied configuration</small></div>
+        <div class="metric"><label>MAX RIM VELOCITY</label><strong id="resVelocity">18.85 <i>m/s</i></strong><small>calculated</small></div>
+        <div class="metric"><label>PEAK GRAVITY</label><strong class="green-t" id="resGravity">2.415 <i>g</i></strong><small>calculated</small></div>
+        <div class="metric warning"><label>MAX CORIOLIS</label><strong id="resCoriolis">0.00 <i>N</i></strong><small>calculated</small></div>
+      </div>
+      <div class="results-grid">
+        <div class="panel chart-panel large-chart"><div class="section-title">VELOCITY PROFILE</div><canvas id="resultVelocity"></canvas></div>
+        <div class="panel chart-panel large-chart"><div class="section-title">ACCELERATION COMPONENTS</div><canvas id="resultAccel"></canvas></div>
+      </div>
+      <div class="panel table-panel">
+        <div class="section-title">EXPERIMENTAL OUTPUTS &amp; BENCHMARK</div>
+        <table><thead><tr><th>TIME</th><th>RPM</th><th>VELOCITY</th><th>GRAVITY</th><th>CORIOLIS</th></tr></thead>
+        <tbody id="resultTable"></tbody></table>
+      </div>
+    </section>
+  </main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
